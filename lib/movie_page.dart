@@ -63,6 +63,7 @@ class _AnimatedMovieListState extends State<AnimatedMovieList> {
       height: 50,
       child: Material(
         animationDuration: const Duration(milliseconds: 200),
+        color: _focusedIndex == index ? Colors.lightBlueAccent : Colors.white,
         child: InkWell(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -97,7 +98,6 @@ class _AnimatedMovieListState extends State<AnimatedMovieList> {
               itemSize: MediaQuery.of(context).size.width,
               itemBuilder: (context, index) => _buildListItem(context, index),
               itemCount: movieLists.length,
-              margin: const EdgeInsets.all(10),
             ),
           ),
           _buildItemDetail(),
