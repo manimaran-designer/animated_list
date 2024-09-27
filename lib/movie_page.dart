@@ -18,6 +18,7 @@ class _AnimatedMovieListState extends State<AnimatedMovieList> {
   @override
   void initState() {
     super.initState();
+    sslKey = GlobalKey();
     movieLists.addAll([
       MovieLists(
         movieImageURL:
@@ -47,7 +48,7 @@ class _AnimatedMovieListState extends State<AnimatedMovieList> {
     if (movieLists.length > _focusedIndex)
       return SizedBox(
         height: 150,
-        child: Text('${movieLists.map((item) => item.movieName).first}'),
+        child: Text('${movieLists[_focusedIndex].movieName}'),
       );
 
     return const SizedBox(
@@ -62,7 +63,6 @@ class _AnimatedMovieListState extends State<AnimatedMovieList> {
       height: 50,
       child: Material(
         animationDuration: const Duration(milliseconds: 200),
-        color: _focusedIndex == index ? Colors.lightBlueAccent : Colors.white,
         child: InkWell(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -71,8 +71,11 @@ class _AnimatedMovieListState extends State<AnimatedMovieList> {
           onTap: () {
             print("Do anything here");
             setState(() {
+              _focusedIndex = index;
               //trigger focus manually
-              // sslKey.currentState!.focusToItem(index);
+              if (sslKey.currentState != null) {
+                sslKey.currentState!.focusToItem(index);
+              }
             });
           },
         ),
@@ -86,37 +89,36 @@ class _AnimatedMovieListState extends State<AnimatedMovieList> {
       appBar: AppBar(
         title: const Text("Animated Movie List"),
       ),
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: ScrollSnapList(
-                onItemFocus: _onItemFocus,
-                itemSize: MediaQuery.of(context).size.width,
-                itemBuilder: _buildListItem,
-                itemCount: movieLists.length,
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: ScrollSnapList(
+              onItemFocus: _onItemFocus,
+              itemSize: MediaQuery.of(context).size.width,
+              itemBuilder: (context, index) => _buildListItem(context, index),
+              itemCount: movieLists.length,
+              margin: const EdgeInsets.all(10),
+            ),
+          ),
+          _buildItemDetail(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              ElevatedButton(
+                child: const Icon(Icons.arrow_back_ios_new_rounded),
+                onPressed: () {
+                  setState(() {});
+                },
               ),
-            ),
-            _buildItemDetail(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                ElevatedButton(
-                  child: const Icon(Icons.arrow_back_ios_new_rounded),
-                  onPressed: () {
-                    setState(() {});
-                  },
-                ),
-                ElevatedButton(
-                  child: const RotatedBox(
-                      quarterTurns: 2,
-                      child: Icon(Icons.arrow_back_ios_new_rounded)),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ],
-        ),
+              ElevatedButton(
+                child: const RotatedBox(
+                    quarterTurns: 2,
+                    child: Icon(Icons.arrow_back_ios_new_rounded)),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
